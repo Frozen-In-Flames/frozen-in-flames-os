@@ -24,3 +24,10 @@ jobs:
         run: nix eval .#nixosConfigurations.frozen-in-flames.config.system.build.toplevel.drvPath
       - name: Build the catalog check
         run: nix build .#checks.x86_64-linux.catalog --no-link --print-build-logs
+      - name: Upload the resolved flake.lock
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flake-lock
+          path: flake.lock
+          if-no-files-found: ignore
