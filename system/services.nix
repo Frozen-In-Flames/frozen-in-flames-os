@@ -4,13 +4,16 @@ let
   phpSocket = config.services.phpfpm.pools.wordpress.socket;
 
   # PG4WP, the PostgreSQL driver for WordPress, from its maintained GitHub fork.
-  # The fork publishes no releases, so rev must be a reviewed commit SHA.
-  # The first build stops on the hash and prints it.
+  # The fork publishes no releases, so rev is a pinned commit: the fork's HEAD
+  # as of 2026-11-16, reviewed for layout against the fork's own install
+  # instructions (the pg4wp directory goes in wp-content, and db.php is copied
+  # from inside it to wp-content/db.php). The hash is the archive tree hash
+  # computed with nix hash path; the first full build re-verifies it.
   pg4wp = pkgs.fetchFromGitHub {
     owner = "PostgreSQL-For-Wordpress";
     repo = "postgresql-for-wordpress";
-    rev = "REPLACE-WITH-COMMIT-SHA";
-    hash = lib.fakeHash;
+    rev = "ea843d1560a40cce42b9297323636bde59a9bc70";
+    hash = "sha256-fiT5IMFlTvrNFO9ak1yQHyxa/dYZu7/HRxVO7e3d0kc=";
   };
   # FreeBSD 15.0-RELEASE amd64 UFS image from FreeBSD's official release path.
   # The first build stops on the hash and prints it.
@@ -91,9 +94,8 @@ in
       if [ ! -d ${wordpressRoot} ]; then
         cp -r ${pkgs.wordpress}/share/wordpress ${wordpressRoot}
         chmod -R u+w ${wordpressRoot}
-        mkdir -p ${wordpressRoot}/wp-content/plugins
-        cp -r ${pg4wp} ${wordpressRoot}/wp-content/plugins/pg4wp
-        cp ${pg4wp}/db.php ${wordpressRoot}/wp-content/db.php
+        cp -r ${pg4wp}/pg4wp ${wordpressRoot}/wp-content/pg4wp
+        cp ${pg4wp}/pg4wp/db.php ${wordpressRoot}/wp-content/db.php
         chown -R wordpress:wordpress ${wordpressRoot}
       fi
     '';
