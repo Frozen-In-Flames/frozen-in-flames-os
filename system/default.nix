@@ -20,7 +20,11 @@
   i18n.defaultLocale = "en_US.UTF-8";
 
   # Libre policy: proprietary firmware is not loaded. See PROVENANCE-EXCEPTIONS.md.
-  hardware.enableRedistributableFirmware = false;
+  # mkForce because the nixpkgs all-hardware profile sets this to true at the
+  # same priority; the libre policy is a release invariant and must win. The
+  # conflict was found by the first full flake evaluation (GitHub Actions,
+  # 2026-11-16).
+  hardware.enableRedistributableFirmware = lib.mkForce false;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
