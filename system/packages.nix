@@ -27,9 +27,9 @@
     nginx
     apacheHttpd
 
-    # Data
+    # Data (Valkey is the BSD-licensed Redis fork; see docs/license-review.md)
     postgresql
-    redis
+    valkey
 
     # Web
     chromium

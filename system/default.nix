@@ -16,22 +16,17 @@
   time.timeZone = "UTC";
   i18n.defaultLocale = "en_US.UTF-8";
 
-  # Libre policy: proprietary firmware is not loaded. Some Wi-Fi and GPU hardware
-  # may not work until a documented exception is approved.
+  # Libre policy: proprietary firmware is not loaded. See PROVENANCE-EXCEPTIONS.md.
   hardware.enableRedistributableFirmware = false;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Desktop. No automatic login.
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
 
-  # No default credentials. Account setup at first boot is not built yet.
+  # First boot: GNOME Initial Setup creates the first account. No default credentials.
+  services.gnome.gnome-initial-setup.enable = lib.mkDefault true;
   users.mutableUsers = true;
-  users.users.frozen = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "docker" "kvm" ];
-  };
 
   services.openssh = {
     enable = true;

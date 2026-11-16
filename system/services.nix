@@ -26,7 +26,9 @@ in
     ensureUsers = [{ name = "wordpress"; ensureDBOwnership = true; }];
   };
 
-  services.redis.servers."" = {
+  # Redis is replaced by Valkey, its BSD-licensed fork. See docs/license-review.md.
+  # Verify the services.valkey option name on the first build.
+  services.valkey.servers."" = {
     enable = true;
     port = 6379;
   };

@@ -59,8 +59,8 @@ PLATFORMS = [
     # Data
     ("PostgreSQL", "Data", "Primary store for accounts, projects and WordPress",
      "sudo -u postgres psql -tAc 'select 1' | grep -qx 1"),
-    ("Redis", "Data", "Cache and event bus",
-     "redis-cli ping | grep -qx PONG"),
+    ("Redis (Valkey)", "Data", "Cache and event bus (Valkey, the BSD-licensed Redis fork)",
+     "valkey-cli ping | grep -qx PONG"),
 
     # Delivery
     ("nginx", "Delivery", "Front door that routes traffic to every service",

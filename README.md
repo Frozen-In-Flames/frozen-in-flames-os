@@ -6,18 +6,28 @@ Users work through tasks. The platforms run underneath and stay hidden.
 ## Layout
 
 - `flake.nix`: builds two configurations and two outputs
-- `system/default.nix`: release base system (desktop, networking, firmware policy, SSH)
+- `system/default.nix`: release base system (desktop, first-boot account setup, networking, firmware policy, SSH)
 - `system/packages.nix`: installable platforms, system-wide
-- `system/services.nix`: services, WordPress, Apache, Kubernetes, Home Assistant, FreeBSD guest, first-boot toolchains
-- `profiles/development.nix`: test-only settings (password, passwordless sudo, open ports)
+- `system/services.nix`: services (PostgreSQL, Valkey, nginx, WordPress, Apache, Docker, Kubernetes, Home Assistant, FreeBSD guest, first-boot toolchains)
+- `profiles/development.nix`: test-only settings (test user, passwordless sudo, password SSH, open ports)
 - `tests/health_check.py`: 39 checks, one per platform, each testing real function
 - `scripts/build.sh`: builds an output inside a Nix container
 - `scripts/run.sh`: boots a test image in a KVM virtual machine
+- `docs/license-review.md`: license status for all 39 platforms, with items to verify
+- `PROVENANCE-EXCEPTIONS.md`: every departure from the libre policy, with its planned fix
 
 ## Two configurations
 
-- **frozen-in-flames** (release): no default password, no passwordless sudo, password SSH off, firewall at defaults, proprietary firmware not loaded. Output: `iso`.
-- **frozen-in-flames-dev** (test): adds `profiles/development.nix`, which sets the password `frozen`, passwordless sudo, password SSH, and ports 22/80/8123. Output: `qcow2-dev`. Only this image can be checked by `tests/health_check.py`.
+- **frozen-in-flames** (release): no default credentials. GNOME Initial Setup creates the first account at first boot. Password SSH is off. Proprietary firmware is not loaded. Output: `iso`.
+- **frozen-in-flames-dev** (test): adds `profiles/development.nix`, which creates user `frozen` with password `frozen`, passwordless sudo, password SSH, and ports 22/80/8123. Output: `qcow2-dev`. Only this image can be checked by `tests/health_check.py`.
+
+## Decisions applied
+
+- **Redis is replaced by Valkey**, the BSD-licensed fork. Redis 7.4 and later are not open source, and Redis 8 offers AGPLv3 only as an option.
+- **Firmware policy is strict**: proprietary firmware is not loaded. PyTorch and TensorFlow run on CPU only.
+- **FreeBSD** runs as a prebuilt image, recorded as a provenance exception.
+- **VS Code** is VSCodium, the open source build.
+- **WordPress** runs on PostgreSQL through PG4WP.
 
 ## Build and run
 
@@ -29,25 +39,25 @@ Users work through tasks. The platforms run underneath and stay hidden.
 6. Install `sshpass` on the host, then run `python3 tests/health_check.py`.
 7. `scripts/build.sh iso` produces the installer for physical hardware.
 
-## Changes made in response to review
+## Not yet verified by a build
 
-- Removed `nixpkgs.config.allowUnfree`.
-- Removed automatic login.
-- Moved all default credentials, passwordless sudo, password SSH, and open ports into `profiles/development.nix`.
-- Added an installer ISO output.
-- Pinned nixpkgs to `nixos-25.05` and set up `flake.lock` for an exact revision.
-- Set `hardware.enableRedistributableFirmware = false` for the libre policy.
+These are written from memory of nixpkgs and need a real build to confirm:
+
+- `services.valkey` and `services.gnome.gnome-initial-setup` option names
+- Apache's `Listen` override, which may conflict with nginx on port 80
+- WordPress's file layout under `pkgs.wordpress`
+- Single-node Kubernetes setup
+- TensorFlow's availability in nixpkgs
+- The FreeBSD download URL
+- Two placeholder hashes, which can only be filled from a real download
 
 ## Known gaps
 
-- **Account setup**: the release has no password yet, so a first-boot setup step is needed before anyone can log in.
-- **Redis license**: Redis 7.4 and later are not open source unless you use the AGPLv3 option. Valkey is a BSD-licensed fork and a drop-in replacement. The choice is undecided.
-- **FreeBSD image**: the guest is a prebuilt binary downloaded from FreeBSD. Under the libre policy it needs a provenance decision or a source build.
-- **Substitutes**: builds use the Nix binary cache. A source-only build needs a separate decision.
-- **Hardware**: with firmware disabled, some Wi-Fi and GPU hardware may not work.
-- **Not started**: the provenance database, Debian dependency resolver, libre knowledge base, policy and profile layers, compliance mapping, AI model management, and the graphical workspace.
+- The first user created at install time is not in the `docker` or `kvm` groups.
+- React, Angular, and Rails are installed at first boot without pinned versions (see `PROVENANCE-EXCEPTIONS.md`).
+- Not started: the provenance database, Debian dependency resolver, libre knowledge base, policy and profile layers, compliance mapping, AI model management, and the graphical workspace.
 
 ## Status
 
-Not built or booted. Nix is not available in the authoring sandbox, so the Nix files
-have not been evaluated. Expect the first build to show errors in the places listed above.
+Not built or booted. The Nix files have not been evaluated, so expect the first build to
+show errors in the places listed above.
