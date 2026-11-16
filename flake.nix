@@ -28,15 +28,31 @@
     in
     {
       nixosConfigurations = {
+        # The standalone configurations add the reference disk layout; the
+        # image packages below take theirs from their generator formats.
         frozen-in-flames = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = releaseModules;
+          modules = releaseModules ++ [ ./system/disk.nix ];
         };
         frozen-in-flames-test = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = testModules;
+          modules = testModules ++ [ ./system/disk.nix ];
         };
       };
+
+      checks.${system}.catalog =
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = false;
+          };
+        in
+        pkgs.runCommand "fif-catalog-check"
+          { nativeBuildInputs = [ pkgs.python3 ]; }
+          ''
+            python ${./scripts/validate_catalog.py} ${./registry/platforms.json}
+            touch $out
+          '';
 
       packages.${system} = {
         qcow2 = nixos-generators.nixosGenerate {
