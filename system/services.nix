@@ -48,6 +48,13 @@ in
     };
   };
 
+  # The redis module (vmOverCommit, on by default) and the install-iso
+  # profile both define this sysctl, and the sysctl option's unique merge
+  # rejects the pair even though both values are "1". Pinning the same value
+  # here with mkForce leaves exactly one winning definition in every
+  # configuration. Found by flake evaluation on GitHub Actions, 2026-11-16.
+  boot.kernel.sysctl."vm.overcommit_memory" = lib.mkForce "1";
+
   # Web: WordPress runs under PHP-FPM on port 8080. The workspace owns port 80.
   services.nginx.virtualHosts.wordpress = {
     listen = [ { addr = "0.0.0.0"; port = 8080; } ];
