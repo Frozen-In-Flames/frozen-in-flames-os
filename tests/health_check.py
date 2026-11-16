@@ -82,7 +82,7 @@ PLATFORMS = [
     ("Ruby on Rails", "Web", "Back-office app for accounts and administration",
      "GEM_HOME=/opt/frozen/gems /opt/frozen/gems/bin/rails --version | grep -q Rails"),
     ("WordPress", "Web", "Publishes docs, blog posts and pages",
-     "curl -s http://127.0.0.1:8000/ | grep -qi 'wp-content\\|wordpress'"),
+     "curl -s http://127.0.0.1:8080/ | grep -qi 'wp-content\\|wordpress'"),
     ("Chromium", "Web", "Renders live previews",
      "chromium --headless --no-sandbox --dump-dom about:blank | grep -qi html"),
     ("Firefox", "Web", "Second browser for cross-browser testing",

@@ -20,6 +20,7 @@
         ./system/packages.nix
         ./system/services.nix
         ./system/frozen-services.nix
+        ./system/legacy.nix
       ];
 
       # Test configuration. Development credentials and open ports. Never ship it.

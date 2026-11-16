@@ -3,14 +3,19 @@ let
   wordpressRoot = "/var/lib/wordpress";
   phpSocket = config.services.phpfpm.pools.wordpress.socket;
 
-  # Placeholder hashes. The first build stops on these lines and prints the real hash.
-  pg4wp = pkgs.fetchzip {
-    url = "https://downloads.wordpress.org/plugin/pg4wp.zip";
+  # PG4WP, the PostgreSQL driver for WordPress, from its maintained GitHub fork.
+  # The fork publishes no releases, so rev must be a reviewed commit SHA.
+  # The first build stops on the hash and prints it.
+  pg4wp = pkgs.fetchFromGitHub {
+    owner = "PostgreSQL-For-Wordpress";
+    repo = "postgresql-for-wordpress";
+    rev = "REPLACE-WITH-COMMIT-SHA";
     hash = lib.fakeHash;
   };
+  # FreeBSD 15.0-RELEASE amd64 UFS image from FreeBSD's official release path.
+  # The first build stops on the hash and prints it.
   freebsdArchive = pkgs.fetchurl {
-    # Verify this URL against download.freebsd.org before the first build.
-    url = "https://download.freebsd.org/releases/VM-IMAGES/14.3-RELEASE/amd64/Latest/FreeBSD-14.3-RELEASE-amd64.qcow2.xz";
+    url = "https://download.freebsd.org/releases/VM-IMAGES/15.0-RELEASE/amd64/Latest/FreeBSD-15.0-RELEASE-amd64-ufs.qcow2.xz";
     hash = lib.fakeHash;
   };
   freebsdImage = pkgs.runCommand "freebsd.qcow2" { nativeBuildInputs = [ pkgs.xz ]; } ''
@@ -29,14 +34,15 @@ in
   # Verify the services.valkey option name on the first build.
   services.valkey.servers."" = {
     enable = true;
-    port = 6379;
-    bind = "127.0.0.1";
+    settings = {
+      port = 6379;
+      bind = "127.0.0.1";
+    };
   };
 
-  # Web: WordPress runs under PHP-FPM and is served on loopback port 8000,
-  # because the UI owns port 80.
+  # Web: WordPress runs under PHP-FPM on port 8080. The workspace owns port 80.
   services.nginx.virtualHosts.wordpress = {
-    listen = [ { addr = "127.0.0.1"; port = 8000; } ];
+    listen = [ { addr = "0.0.0.0"; port = 8080; } ];
     root = wordpressRoot;
     locations."/" = {
       tryFiles = "$uri $uri/ /index.php?$args";
@@ -93,15 +99,7 @@ in
     '';
   };
 
-  # Delivery: Apache serves legacy applications behind nginx (/legacy/).
-  # Apache's default port is 80, which nginx uses. Confirm the Listen override on first build.
-  services.httpd = {
-    enable = true;
-    adminAddr = "admin@frozen";
-    extraConfig = ''
-      Listen 127.0.0.1:8081
-    '';
-  };
+  # Apache runs as its own unit, defined in system/legacy.nix.
 
   # Delivery: Docker runs the containerized modules.
   virtualisation.docker.enable = true;
@@ -114,7 +112,8 @@ in
     extraFlags = [ "--write-kubeconfig-mode=0644" "--disable=traefik" "--disable=servicelb" ];
   };
 
-  # Smart home: Home Assistant listens on 8123 and is reachable through nginx at /ha/.
+  # Smart home: Home Assistant listens on 8123. nginx does not proxy it, because it needs a
+  # base URL to work under a path.
   services.home-assistant = {
     enable = true;
     config = {

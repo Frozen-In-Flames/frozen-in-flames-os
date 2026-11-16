@@ -65,10 +65,6 @@ in
       default = true;
       root = "${frozenApp}/web";
       locations = {
-        "/ha/" = {
-          proxyPass = "http://127.0.0.1:8123/";
-          proxyWebsockets = true;
-        };
         "/legacy/" = {
           proxyPass = "http://127.0.0.1:8081/";
         };

@@ -1,46 +1,322 @@
 {
   "schema_version": 1,
   "project": "FROZEN IN FLAMES",
-  "policy": {"license_mode": "free-and-open-source-only", "unfree_allowed": false},
+  "policy": {
+    "license_mode": "free-and-open-source-only",
+    "unfree_allowed": false
+  },
   "platforms": [
-    {"id":"linux","name":"Linux","category":"Foundation","role":"Host kernel","mode":"native","license":"GPL-2.0-only"},
-    {"id":"freebsd","name":"FreeBSD","category":"Foundation","role":"Alternate host and jail target","mode":"qemu-image","license":"BSD-2-Clause"},
-    {"id":"systemd","name":"systemd","category":"Foundation","role":"Service supervision and boot","mode":"native","license":"LGPL-2.1-or-later"},
-    {"id":"qemu","name":"QEMU","category":"Foundation","role":"Virtual machine execution","mode":"native","license":"GPL-2.0-or-later"},
-    {"id":"openssl","name":"OpenSSL","category":"Foundation","role":"TLS and cryptography","mode":"native","license":"Apache-2.0"},
-    {"id":"curl","name":"curl","category":"Foundation","role":"HTTP client and health checks","mode":"native","license":"curl"},
-    {"id":"gcc","name":"GCC","category":"Foundation","role":"Native compiler","mode":"native","license":"GPL-3.0-or-later"},
-    {"id":"llvm","name":"LLVM","category":"Foundation","role":"Compiler and JIT toolchain","mode":"native","license":"Apache-2.0 WITH LLVM-exception"},
-    {"id":"python","name":"Python","category":"Runtimes","role":"Automation and service runtime","mode":"native","license":"PSF-2.0"},
-    {"id":"nodejs","name":"Node.js","category":"Runtimes","role":"JavaScript runtime","mode":"native","license":"MIT"},
-    {"id":"ruby","name":"Ruby","category":"Runtimes","role":"Scripting runtime","mode":"native","license":"Ruby"},
-    {"id":"php","name":"PHP","category":"Runtimes","role":"WordPress runtime","mode":"native","license":"PHP-3.01"},
-    {"id":"go","name":"Go","category":"Runtimes","role":"Concurrent services runtime","mode":"native","license":"BSD-3-Clause"},
-    {"id":"rust","name":"Rust","category":"Runtimes","role":"Systems and parser runtime","mode":"native","license":"MIT OR Apache-2.0"},
-    {"id":"dotnet","name":".NET SDK","category":"Runtimes","role":"Cross-platform enterprise runtime","mode":"native","license":"MIT"},
-    {"id":"typescript","name":"TypeScript","category":"Runtimes","role":"Typed web tooling","mode":"native","license":"Apache-2.0"},
-    {"id":"postgresql","name":"PostgreSQL","category":"Data","role":"Primary relational and provenance store","mode":"service","license":"PostgreSQL"},
-    {"id":"valkey","name":"Valkey","category":"Data","role":"Cache and event transport (Redis replacement)","mode":"service","license":"BSD-3-Clause"},
-    {"id":"nginx","name":"nginx","category":"Delivery","role":"Reverse proxy and static delivery","mode":"service","license":"BSD-2-Clause"},
-    {"id":"apache","name":"Apache HTTP Server","category":"Delivery","role":"Compatibility web server","mode":"service","license":"Apache-2.0"},
-    {"id":"docker","name":"Docker Engine","category":"Delivery","role":"Container runtime","mode":"service","license":"Apache-2.0"},
-    {"id":"kubernetes","name":"Kubernetes / k3s","category":"Delivery","role":"Container orchestration","mode":"service","license":"Apache-2.0"},
-    {"id":"git","name":"Git","category":"Delivery","role":"Source and configuration versioning","mode":"native","license":"GPL-2.0-only"},
-    {"id":"react","name":"React","category":"Web","role":"Workspace UI component framework","mode":"on-demand","license":"MIT"},
-    {"id":"angular","name":"Angular","category":"Web","role":"Enterprise UI target","mode":"on-demand","license":"MIT"},
-    {"id":"rails","name":"Ruby on Rails","category":"Web","role":"Back-office web application target","mode":"on-demand","license":"MIT"},
-    {"id":"wordpress","name":"WordPress","category":"Web","role":"Publishing platform target","mode":"on-demand","license":"GPL-2.0-or-later"},
-    {"id":"chromium","name":"Chromium","category":"Web","role":"Embedded browser and preview target","mode":"native","license":"BSD-3-Clause"},
-    {"id":"firefox","name":"Firefox","category":"Web","role":"Cross-browser validation","mode":"native","license":"MPL-2.0"},
-    {"id":"pytorch","name":"PyTorch","category":"AI","role":"Model training and inference","mode":"on-demand","license":"BSD-3-Clause"},
-    {"id":"tensorflow","name":"TensorFlow","category":"AI","role":"Model serving and inference","mode":"on-demand","license":"Apache-2.0"},
-    {"id":"ffmpeg","name":"FFmpeg","category":"Media","role":"Audio and video processing","mode":"native","license":"LGPL-2.1-or-later (build-dependent)"},
-    {"id":"vlc","name":"VLC","category":"Media","role":"Media playback and review","mode":"native","license":"GPL-2.0-or-later"},
-    {"id":"blender","name":"Blender","category":"Media","role":"3D authoring and rendering","mode":"native","license":"GPL-3.0-or-later"},
-    {"id":"libreoffice","name":"LibreOffice","category":"Media","role":"Office document authoring and conversion","mode":"native","license":"MPL-2.0 OR LGPL-3.0-or-later"},
-    {"id":"vscodium","name":"VSCodium (Code-OSS build)","category":"Editors","role":"Libre VS Code-compatible editor","mode":"native","license":"MIT (Code-OSS)"},
-    {"id":"vim","name":"Vim","category":"Editors","role":"Terminal editor","mode":"native","license":"Vim"},
-    {"id":"neovim","name":"Neovim","category":"Editors","role":"Extensible terminal editor","mode":"native","license":"Apache-2.0"},
-    {"id":"home-assistant","name":"Home Assistant","category":"Smart Home","role":"Local smart-home automation","mode":"service","license":"Apache-2.0"}
+    {
+      "id": "linux",
+      "name": "Linux",
+      "category": "Foundation",
+      "role": "Host kernel",
+      "mode": "native",
+      "license": "GPL-2.0-only"
+    },
+    {
+      "id": "freebsd",
+      "name": "FreeBSD",
+      "category": "Foundation",
+      "role": "Alternate host and jail target",
+      "mode": "qemu-image",
+      "license": "BSD-2-Clause"
+    },
+    {
+      "id": "systemd",
+      "name": "systemd",
+      "category": "Foundation",
+      "role": "Service supervision and boot",
+      "mode": "native",
+      "license": "LGPL-2.1-or-later"
+    },
+    {
+      "id": "qemu",
+      "name": "QEMU",
+      "category": "Foundation",
+      "role": "Virtual machine execution",
+      "mode": "native",
+      "license": "GPL-2.0-only AND LGPL-2.1-only"
+    },
+    {
+      "id": "openssl",
+      "name": "OpenSSL",
+      "category": "Foundation",
+      "role": "TLS and cryptography",
+      "mode": "native",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "curl",
+      "name": "curl",
+      "category": "Foundation",
+      "role": "HTTP client and health checks",
+      "mode": "native",
+      "license": "curl"
+    },
+    {
+      "id": "gcc",
+      "name": "GCC",
+      "category": "Foundation",
+      "role": "Native compiler",
+      "mode": "native",
+      "license": "GPL-3.0-or-later"
+    },
+    {
+      "id": "llvm",
+      "name": "LLVM",
+      "category": "Foundation",
+      "role": "Compiler and JIT toolchain",
+      "mode": "native",
+      "license": "Apache-2.0 WITH LLVM-exception"
+    },
+    {
+      "id": "python",
+      "name": "Python",
+      "category": "Runtimes",
+      "role": "Automation and service runtime",
+      "mode": "native",
+      "license": "PSF-2.0"
+    },
+    {
+      "id": "nodejs",
+      "name": "Node.js",
+      "category": "Runtimes",
+      "role": "JavaScript runtime",
+      "mode": "native",
+      "license": "MIT"
+    },
+    {
+      "id": "ruby",
+      "name": "Ruby",
+      "category": "Runtimes",
+      "role": "Scripting runtime",
+      "mode": "native",
+      "license": "Ruby"
+    },
+    {
+      "id": "php",
+      "name": "PHP",
+      "category": "Runtimes",
+      "role": "WordPress runtime",
+      "mode": "native",
+      "license": "PHP-3.01"
+    },
+    {
+      "id": "go",
+      "name": "Go",
+      "category": "Runtimes",
+      "role": "Concurrent services runtime",
+      "mode": "native",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "id": "rust",
+      "name": "Rust",
+      "category": "Runtimes",
+      "role": "Systems and parser runtime",
+      "mode": "native",
+      "license": "MIT OR Apache-2.0"
+    },
+    {
+      "id": "dotnet",
+      "name": ".NET SDK",
+      "category": "Runtimes",
+      "role": "Cross-platform enterprise runtime",
+      "mode": "native",
+      "license": "MIT"
+    },
+    {
+      "id": "typescript",
+      "name": "TypeScript",
+      "category": "Runtimes",
+      "role": "Typed web tooling",
+      "mode": "native",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "postgresql",
+      "name": "PostgreSQL",
+      "category": "Data",
+      "role": "Primary relational and provenance store",
+      "mode": "service",
+      "license": "PostgreSQL"
+    },
+    {
+      "id": "valkey",
+      "name": "Valkey",
+      "category": "Data",
+      "role": "Cache and event transport (Redis replacement)",
+      "mode": "service",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "id": "nginx",
+      "name": "nginx",
+      "category": "Delivery",
+      "role": "Reverse proxy and static delivery",
+      "mode": "service",
+      "license": "BSD-2-Clause"
+    },
+    {
+      "id": "apache",
+      "name": "Apache HTTP Server",
+      "category": "Delivery",
+      "role": "Compatibility web server",
+      "mode": "service",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "docker",
+      "name": "Docker Engine",
+      "category": "Delivery",
+      "role": "Container runtime",
+      "mode": "service",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "kubernetes",
+      "name": "Kubernetes / k3s",
+      "category": "Delivery",
+      "role": "Container orchestration",
+      "mode": "service",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "git",
+      "name": "Git",
+      "category": "Delivery",
+      "role": "Source and configuration versioning",
+      "mode": "native",
+      "license": "GPL-2.0-only"
+    },
+    {
+      "id": "react",
+      "name": "React",
+      "category": "Web",
+      "role": "Workspace UI component framework",
+      "mode": "on-demand",
+      "license": "MIT"
+    },
+    {
+      "id": "angular",
+      "name": "Angular",
+      "category": "Web",
+      "role": "Enterprise UI target",
+      "mode": "on-demand",
+      "license": "MIT"
+    },
+    {
+      "id": "rails",
+      "name": "Ruby on Rails",
+      "category": "Web",
+      "role": "Back-office web application target",
+      "mode": "on-demand",
+      "license": "MIT"
+    },
+    {
+      "id": "wordpress",
+      "name": "WordPress",
+      "category": "Web",
+      "role": "Publishing platform target",
+      "mode": "on-demand",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "id": "chromium",
+      "name": "Chromium",
+      "category": "Web",
+      "role": "Embedded browser and preview target",
+      "mode": "native",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "id": "firefox",
+      "name": "Firefox",
+      "category": "Web",
+      "role": "Cross-browser validation",
+      "mode": "native",
+      "license": "MPL-2.0"
+    },
+    {
+      "id": "pytorch",
+      "name": "PyTorch",
+      "category": "AI",
+      "role": "Model training and inference",
+      "mode": "on-demand",
+      "license": "BSD-3-Clause"
+    },
+    {
+      "id": "tensorflow",
+      "name": "TensorFlow",
+      "category": "AI",
+      "role": "Model serving and inference",
+      "mode": "on-demand",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "ffmpeg",
+      "name": "FFmpeg",
+      "category": "Media",
+      "role": "Audio and video processing",
+      "mode": "native",
+      "license": "LGPL-2.1-or-later (build-dependent)"
+    },
+    {
+      "id": "vlc",
+      "name": "VLC",
+      "category": "Media",
+      "role": "Media playback and review",
+      "mode": "native",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "id": "blender",
+      "name": "Blender",
+      "category": "Media",
+      "role": "3D authoring and rendering",
+      "mode": "native",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "id": "libreoffice",
+      "name": "LibreOffice",
+      "category": "Media",
+      "role": "Office document authoring and conversion",
+      "mode": "native",
+      "license": "MPL-2.0"
+    },
+    {
+      "id": "vscodium",
+      "name": "VSCodium (Code-OSS build)",
+      "category": "Editors",
+      "role": "Libre VS Code-compatible editor",
+      "mode": "native",
+      "license": "MIT (Code-OSS)"
+    },
+    {
+      "id": "vim",
+      "name": "Vim",
+      "category": "Editors",
+      "role": "Terminal editor",
+      "mode": "native",
+      "license": "Vim"
+    },
+    {
+      "id": "neovim",
+      "name": "Neovim",
+      "category": "Editors",
+      "role": "Extensible terminal editor",
+      "mode": "native",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "home-assistant",
+      "name": "Home Assistant",
+      "category": "Smart Home",
+      "role": "Local smart-home automation",
+      "mode": "service",
+      "license": "Apache-2.0"
+    }
   ]
 }
