@@ -1,4 +1,4 @@
-# FROZEN IN FLAMES
+# Frozen in Flames OS
 
 A libre NixOS-based computing environment: 39 platform targets, nine loopback-only service processes, a PostgreSQL schema, Valkey as the cache and event service, a web workspace, and QCOW2 and ISO build targets.
 
