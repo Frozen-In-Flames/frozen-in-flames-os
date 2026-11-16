@@ -16,10 +16,13 @@ let
     hash = "sha256-fiT5IMFlTvrNFO9ak1yQHyxa/dYZu7/HRxVO7e3d0kc=";
   };
   # FreeBSD 15.0-RELEASE amd64 UFS image from FreeBSD's official release path.
-  # The first build stops on the hash and prints it.
+  # Hash verified 2026-11-16 against the FreeBSD project's published
+  # CHECKSUM.SHA256 for this exact file (hex sha256
+  # 7aa8cd3acba96b05e4343776ee3cc52828c2eea206b16637a7d55d775aadc200),
+  # from a complete download that also passed an xz integrity test.
   freebsdArchive = pkgs.fetchurl {
     url = "https://download.freebsd.org/releases/VM-IMAGES/15.0-RELEASE/amd64/Latest/FreeBSD-15.0-RELEASE-amd64-ufs.qcow2.xz";
-    hash = lib.fakeHash;
+    hash = "sha256-eqjNOsupawXkNDd27jzFKCjC7qIGsWY3p9Vdd1qtwgA=";
   };
   freebsdImage = pkgs.runCommand "freebsd.qcow2" { nativeBuildInputs = [ pkgs.xz ]; } ''
     xz -dc ${freebsdArchive} > $out
