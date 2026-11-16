@@ -34,10 +34,15 @@ in
   };
 
   # Redis is replaced by Valkey, its BSD-licensed fork. See docs/license-review.md.
-  # Verify the services.valkey option name on the first build.
-  services.valkey.servers."" = {
-    enable = true;
-    settings = {
+  # nixpkgs nixos-26.05 has no services.valkey module; the first flake
+  # evaluation (GitHub Actions, 2026-11-16) proved the option does not exist.
+  # The redis module is the vehicle and the software stays Valkey: its package
+  # option points at pkgs.valkey, and the module's own bind and port options
+  # carry the loopback-only configuration.
+  services.redis = {
+    package = pkgs.valkey;
+    servers."" = {
+      enable = true;
       port = 6379;
       bind = "127.0.0.1";
     };
