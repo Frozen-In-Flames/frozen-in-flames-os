@@ -20,4 +20,8 @@
 
 ## Not claimed
 
-No Nix evaluation, package build, QCOW2 generation, ISO generation, VM boot, hardware test, or security certification has been performed in this environment. A successful source-level test is not a successful OS build.
+Nix flake evaluation has been performed in continuous integration and
+is green; see the Status section of README.md. No full system package
+build, QCOW2 generation, ISO generation, VM boot, hardware test, or
+security certification has been performed. A successful evaluation is
+not a successful OS build.

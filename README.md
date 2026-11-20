@@ -63,4 +63,14 @@ The release firewall opens no ports. `docs/RECONCILIATION.md` lists the checks a
 
 ## Status
 
-Catalog validation and 19 unit tests pass, and all nine services answer on loopback. Nothing in the Nix layer has been evaluated or built yet. The FreeBSD image hash and the WordPress plugin commit are still open, as listed in `docs/RECONCILIATION.md`.
+Catalog validation and 19 unit tests pass, and all nine services answer
+on loopback. The Nix flake evaluates successfully in continuous
+integration: the Flake evaluation workflow runs nix flake check with
+no builds, a deep evaluation of the NixOS configuration, and a build of
+the catalog check on every relevant push. The most recent successful
+run completed on November 16, 2026, and the resolved flake.lock is
+committed to this repository. The FreeBSD 15.0 image hash and the PG4WP
+plugin commit are pinned in system/services.nix. No QCOW2 image, no
+installer ISO, and no VM boot has been produced yet; image build and
+boot verification remain open. Remaining reconciliation items are
+listed in docs/RECONCILIATION.md.

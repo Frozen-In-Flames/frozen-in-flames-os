@@ -4,14 +4,17 @@
 
 | Item | Finding | Result |
 | --- | --- | --- |
-| FreeBSD image | FreeBSD's release path has 15.0-RELEASE amd64 UFS images, named `FreeBSD-15.0-RELEASE-amd64-ufs.qcow2.xz` | URL corrected from 14.3. The SHA-256 is not available here |
+| FreeBSD image | FreeBSD's release path has 15.0-RELEASE amd64 UFS images, named `FreeBSD-15.0-RELEASE-amd64-ufs.qcow2.xz` | URL corrected from 14.3 |
 | k3s options | `extraFlags` accepts a string or a list. `role` defaults to `server` | Confirmed. Configuration unchanged |
 | GNOME Initial Setup | `services.gnome.gnome-initial-setup.enable` exists, defaults to false, and runs when no user accounts exist | Confirmed. Configuration unchanged |
 | Redis module options | The newer module takes bind and port under `settings` | Valkey follows the same pattern. Not confirmed for Valkey itself |
 | Blender license | Its copyright file says version 2 of the GPL or any later version | Registry corrected from GPL-3.0-or-later |
 | QEMU license | Its maintainer states the binary is GPLv2-only. The Alpine package record lists GPL-2.0-only AND LGPL-2.1-only | Registry corrected from GPL-2.0-or-later |
 | LibreOffice license | The official license page says MPL v2.0 | Registry corrected from the dual entry |
-| PG4WP plugin source | The maintained fork is on GitHub and publishes no releases. The original download URL was wrong | Switched to `fetchFromGitHub`. A reviewed commit SHA is still needed |
+| PG4WP plugin source | The maintained fork is on GitHub and publishes no releases. The original download URL was wrong | Switched to `fetchFromGitHub` |
+| FreeBSD image hash | SHA-256 pinned in system/services.nix, verified 2026-11-16 against the FreeBSD project published checksum for FreeBSD-15.0-RELEASE-amd64-ufs.qcow2.xz | Resolved |
+| PG4WP commit | Pinned commit and archive hash in system/services.nix; plugin layout reviewed against the fork install instructions | Resolved |
+| Nix evaluation | Flake evaluation runs in continuous integration (nix flake check, no builds, plus deep configuration evaluation); successful runs recorded from November 16, 2026; flake.lock committed | Resolved for evaluation. Image build and boot remain open |
 
 ## Changes made
 
@@ -41,11 +44,8 @@ The release firewall opens no ports. Local access works without opening anything
 
 These can't be resolved from this environment, because each needs a download or a decision:
 
-1. **FreeBSD hash**: the SHA-256 of the 15.0 image. The first build prints it.
-2. **PG4WP commit**: a reviewed commit SHA, then its hash. The plugin's file layout (`db.php` and the plugin directory at the repository root) is unverified.
-3. **Valkey options**: `settings.bind` and `settings.port` follow the Redis module pattern. Not confirmed for Valkey.
-4. **Apache module paths**: the `modules/mod_*.so` paths in `system/legacy.nix` are unverified against the nixpkgs package layout.
-5. **Nix evaluation**: nothing in the Nix layer has been evaluated yet.
-6. **Toolchains**: React, Angular, and Rails install on first boot without pinned versions.
-7. **Neovim**: its license row is still open.
-8. **Services**: they don't use PostgreSQL, and nothing persists.
+1. **Valkey options**: `settings.bind` and `settings.port` follow the Redis module pattern. Not confirmed for Valkey.
+2. **Apache module paths**: the `modules/mod_*.so` paths in `system/legacy.nix` are unverified against the nixpkgs package layout.
+3. **Toolchains**: React, Angular, and Rails install on first boot without pinned versions.
+4. **Neovim**: its license row is still open.
+5. **Services**: they don't use PostgreSQL, and nothing persists.
