@@ -48,7 +48,7 @@ Each service is a separate systemd unit that listens only on loopback.
 8. AI model registry: 8108
 9. Workspace: 8109
 
-The services accept and validate input, but nothing is persisted yet.
+The record-accepting services (evidence, AI, profiles) persist accepted records to the state directory and read them back; the remaining services are read-only projections of the registry or pure functions of their input, stateless by design. The per-service account is in `docs/RECONCILIATION.md`.
 
 ## Infrastructure and routes
 
