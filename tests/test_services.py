@@ -17,6 +17,9 @@ import frozen_service.__main__ as svc  # noqa: E402
 # test_core imports the module first, so the environment variable above may come too late.
 # Point the module at this checkout explicitly.
 svc.REGISTRY = ROOT / "registry" / "platforms.json"
+# Persistence tests run against a throwaway state directory.
+import tempfile  # noqa: E402
+svc.STATE = pathlib.Path(tempfile.mkdtemp(prefix="fif-state-test-"))
 
 
 class _Quiet:
@@ -80,10 +83,21 @@ class ServiceTests(unittest.TestCase):
     def test_unknown_path_is_404(self):
         self.assertEqual(call(self.base("catalog"), "/nope")[0], 404)
 
-    def test_evidence_accepts_claim_and_does_not_claim_storage(self):
+    def test_evidence_persists_claim_and_reports_storage(self):
+        # Contract change, 2026-11-21: this test previously asserted
+        # status "accepted-not-persisted", which was the specified
+        # behavior before the audit's persistence item was implemented.
+        # The service now appends accepted records to its state
+        # directory and reports "persisted"; the test asserts the new
+        # contract, including read-back through the GET endpoint.
         status, body = call(self.base("evidence"), "/records", "POST", b'{"claim": "GPL-2.0-only"}')
         self.assertEqual(status, 202)
-        self.assertEqual(body["status"], "accepted-not-persisted")
+        self.assertEqual(body["status"], "persisted")
+        self.assertGreaterEqual(body["stored_records"], 1)
+        status, body = call(self.base("evidence"), "/records")
+        self.assertEqual(status, 200)
+        claims = [entry["record"].get("claim") for entry in body["records"]]
+        self.assertIn("GPL-2.0-only", claims)
 
     def test_query_string_does_not_break_routing(self):
         status, _ = call(self.base("evidence"), "/records?source=test", "POST", b'{"claim": "x"}')
@@ -122,12 +136,17 @@ class ServiceTests(unittest.TestCase):
     def test_dependency_rejects_non_string_relation(self):
         self.assertEqual(call(self.base("dependency"), "/parse", "POST", b'{"relation": 5}')[0], 400)
 
-    def test_build_ai_profiles_accept_metadata_without_storing(self):
+    def test_build_ai_profiles_post_contracts(self):
+        # Build validation still stores nothing: it is a receipt, and
+        # its response carries no storage claim. AI and profiles now
+        # persist like evidence (contract change, 2026-11-21).
         self.assertEqual(call(self.base("build"), "/validate", "POST", b'{"target": "iso"}')[0], 202)
-        self.assertEqual(call(self.base("ai"), "/models", "POST", b'{"name": "m"}')[0], 202)
+        status, body = call(self.base("ai"), "/models", "POST", b'{"name": "m"}')
+        self.assertEqual(status, 202)
+        self.assertEqual(body["status"], "persisted")
         status, body = call(self.base("profiles"), "/profiles", "POST", b'{"name": "p"}')
         self.assertEqual(status, 202)
-        self.assertNotIn("stored", json.dumps(body))
+        self.assertEqual(body["status"], "persisted-not-validated")
 
     def test_registry_missing_returns_503(self):
         original = svc.REGISTRY

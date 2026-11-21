@@ -1,8 +1,17 @@
 """FROZEN IN FLAMES service process.
 
 Nine processes share this module; --service selects one. Each binds to loopback only.
-There is no persistence yet: POST endpoints validate input and report that nothing was
-stored. They never claim a record was saved.
+Persistence: the three record-accepting POST endpoints (evidence /records,
+ai /models, profiles /profiles) append each accepted record as one JSON line
+to FIF_STATE/<service>.jsonl and report status "persisted" only after the
+append succeeds; the matching GET endpoints read the records back. If the
+state directory is not writable the POST fails with 503 and nothing is
+claimed. The remaining services are read-only projections of the platform
+registry or pure functions of their input (dependency parsing, build
+validation), and hold no state by design; the per-service account is in
+docs/RECONCILIATION.md. The relational store (PostgreSQL, database
+"frozen") carries the migration-managed schema applied by the
+frozen-migrate unit, and WordPress uses PostgreSQL through PG4WP.
 """
 from __future__ import annotations
 
@@ -17,7 +26,36 @@ from urllib.parse import urlparse
 
 ROOT = pathlib.Path(os.environ.get("FIF_ROOT", "/opt/frozen-in-flames"))
 REGISTRY = pathlib.Path(os.environ.get("FIF_REGISTRY", str(ROOT / "registry/platforms.json")))
-STATE = pathlib.Path(os.environ.get("FIF_STATE", "/var/lib/frozen-in-flames"))  # reserved for persistence
+STATE = pathlib.Path(os.environ.get("FIF_STATE", "/var/lib/frozen-in-flames"))
+
+
+def persist_record(service, record):
+    """Append one record to the service's JSONL store under STATE.
+
+    Returns the number of records stored after the append. Raises
+    OSError when the state directory cannot be written; callers turn
+    that into a 503 and never claim the record was saved.
+    """
+    STATE.mkdir(parents=True, exist_ok=True)
+    path = STATE / f"{service}.jsonl"
+    line = json.dumps({"ts": time.time(), "record": record}, ensure_ascii=False)
+    with path.open("a", encoding="utf-8") as f:
+        f.write(line + "\n")
+    return sum(1 for _ in path.open(encoding="utf-8"))
+
+
+def read_records(service):
+    """Return every persisted record for a service, oldest first."""
+    path = STATE / f"{service}.jsonl"
+    if not path.exists():
+        return []
+    records = []
+    with path.open(encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                records.append(json.loads(line))
+    return records
 SERVICE_PORTS = {
     "catalog": 8101, "provenance": 8102, "dependency": 8103, "evidence": 8104,
     "policy": 8105, "profiles": 8106, "build": 8107, "ai": 8108, "workspace": 8109,
@@ -111,6 +149,11 @@ class Handler(BaseHTTPRequestHandler):
         if self.service == "provenance" and path == "/identity-model":
             return self.send_json({"chain": ["Project", "Source Version", "Package Instance", "Artifact SHA-256"],
                                    "hash": "sha256"})
+        if (self.service, path) in (("evidence", "/records"), ("ai", "/models"),
+                                    ("profiles", "/profiles")):
+            records = read_records(self.service)
+            return self.send_json({"service": self.service, "count": len(records),
+                                   "records": records})
         if self.service == "policy" and path == "/layers":
             return self.send_json({"layers": ["evidence", "derivation", "policy", "profile"],
                                    "freedom_axes": ["software_freedom_F", "hardware_freedom_H"]})
@@ -125,18 +168,30 @@ class Handler(BaseHTTPRequestHandler):
             claim = payload.get("claim")
             if not isinstance(claim, str) or not claim.strip():
                 return self.send_json({"error": "claim is required"}, 400)
+            try:
+                count = persist_record(self.service, payload)
+            except OSError:
+                return self.send_json({"error": "state directory is not writable; record not stored"}, 503)
             return self.send_json({"accepted": True, "record": payload,
-                                   "status": "accepted-not-persisted"}, 202)
+                                   "status": "persisted", "stored_records": count}, 202)
         if self.service == "build" and path == "/validate":
             return self.send_json({"accepted": True, "requested_target": payload.get("target", "qcow2"),
                                    "note": "Build execution is performed by the host Nix builder, not by this API."},
                                   202)
         if self.service == "ai" and path == "/models":
+            try:
+                count = persist_record(self.service, payload)
+            except OSError:
+                return self.send_json({"error": "state directory is not writable; record not stored"}, 503)
             return self.send_json({"accepted": True, "model": payload,
-                                   "status": "accepted-not-persisted"}, 202)
+                                   "status": "persisted", "stored_records": count}, 202)
         if self.service == "profiles" and path == "/profiles":
+            try:
+                count = persist_record(self.service, payload)
+            except OSError:
+                return self.send_json({"error": "state directory is not writable; record not stored"}, 503)
             return self.send_json({"accepted": True, "profile": payload,
-                                   "status": "accepted-not-persisted-or-validated"}, 202)
+                                   "status": "persisted-not-validated", "stored_records": count}, 202)
         if self.service == "dependency" and path == "/parse":
             relation = payload.get("relation", "")
             if not isinstance(relation, str):

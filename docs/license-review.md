@@ -43,7 +43,7 @@ the FSF evaluation in the specification requires that check for every row.
 | LibreOffice | MPL-2.0 | Free |
 | VS Code (VSCodium) | MIT | Free. Microsoft's VS Code is not open source |
 | Vim | Vim license | Verify against the FSF list |
-| Neovim | Apache-2.0 (some Vim-licensed code) | Verify |
+| Neovim | Apache-2.0 (some Vim-licensed code) | Free |
 | Home Assistant | Apache-2.0 | Free |
 
 
@@ -55,4 +55,8 @@ the FSF evaluation in the specification requires that check for every row.
 | Blender | GPL-2.0-or-later | Blender's copyright file says version 2 of the GPL or any later version. The registry's GPL-3.0-or-later was wrong |
 | LibreOffice | MPL-2.0 | The official license page says MPL v2.0. The dual MPL and LGPLv3+ licensing applies to contributions. The registry's dual entry was corrected to MPL-2.0 |
 
-Still open: the Neovim row, and firmware blobs bundled with QEMU.
+Resolved 2026-11-21: the Neovim row. Neovim's own LICENSE.txt states
+that Neovim is licensed under the Apache 2.0 license except for parts
+contributed under the Vim license; the registry entry (Apache-2.0)
+states the primary license correctly and the row is closed. Still
+open: firmware blobs bundled with QEMU.

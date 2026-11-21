@@ -162,7 +162,12 @@ in
     };
   };
 
-  # Web: React, Angular and Ruby on Rails are installed on first boot, not from nixpkgs.
+  # Web: React, Angular and Ruby on Rails are installed on first boot, not from
+  # nixpkgs. Versions are pinned exactly (verified against the npm registry
+  # and RubyGems on 2026-11-21): react and react-dom 19.3.1, @angular/cli
+  # 22.3.0, rails 8.1.4.1. The Node.js and Ruby interpreters come from
+  # nixpkgs and are pinned by flake.lock. Bumping a pin is a reviewed edit
+  # to this file, never a floating install.
   systemd.services.frozen-toolchains = {
     description = "Install React, Angular and Ruby on Rails";
     wantedBy = [ "multi-user.target" ];
@@ -177,9 +182,9 @@ in
     script = ''
       if [ -f /opt/frozen/.toolchains-done ]; then exit 0; fi
       mkdir -p /opt/frozen/shell /opt/frozen/npm /opt/frozen/gems
-      npm install --prefix /opt/frozen/shell react react-dom
-      npm install -g --prefix /opt/frozen/npm @angular/cli
-      GEM_HOME=/opt/frozen/gems gem install rails --no-document
+      npm install --prefix /opt/frozen/shell react@19.3.1 react-dom@19.3.1
+      npm install -g --prefix /opt/frozen/npm @angular/cli@22.3.0
+      GEM_HOME=/opt/frozen/gems gem install rails -v 8.1.4.1 --no-document
       touch /opt/frozen/.toolchains-done
     '';
   };
