@@ -7,8 +7,8 @@ let
     Listen 127.0.0.1:8081
     ServerName frozen-legacy
     PidFile /run/frozen-legacy/httpd.pid
-    ErrorLog /proc/self/fd/2
-    CustomLog /proc/self/fd/1 common
+    ErrorLog /var/lib/frozen-legacy/error.log
+    CustomLog /var/lib/frozen-legacy/access.log common
     LogLevel warn
 
     LoadModule unixd_module modules/mod_unixd.so
