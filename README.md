@@ -2,6 +2,10 @@
 
 A libre NixOS-based computing environment: 39 platform targets, nine loopback-only service processes, a PostgreSQL schema, Valkey as the cache and event service, a web workspace, and QCOW2 and ISO build targets.
 
+## Boot proof
+
+On 21 November 2026 both images were built from this repository, booted, and measured from inside the running system. All nine services answer on their loopback ports, the platform core is present in the booted environment, and the release image presents no default account with key-only SSH. The one failed unit under emulation is the first-boot toolchain installer; the full verdict, including the honest residue, is in the [boot proof release](https://github.com/Frozen-In-Flames/frozen-in-flames-os/releases/tag/proof-2026-11-21), which carries the narrated proof video (3:46), the results sheet, screenshots, and both boot console logs.
+
 ## Release invariants
 
 - `nixpkgs.config.allowUnfree = false`.
